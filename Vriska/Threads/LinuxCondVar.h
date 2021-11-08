@@ -23,7 +23,12 @@
                 (ts)->tv_nsec = mts.tv_nsec; \
             } while (0)
 # else // VRISKA_MAC
-#  define get_clocktime(ts) clock_gettime(CLOCK_REALTIME, ts)
+#  ifdef VRISKA_MINGW
+#   include <windows.h>
+#   define get_clocktime(ts) Vriska::LinuxCondVar::getTime(ts)
+#  else // VRISKA_MINGW
+#   define get_clocktime(ts) clock_gettime(CLOCK_REALTIME, ts)
+#  endif // !VRISKA_MINGW
 # endif // !VRISKA_MAC
 
 namespace Vriska
@@ -39,6 +44,10 @@ namespace Vriska
     LinuxCondVar const &	operator=(INativeCondVar const & other);
 
   public:
+# ifdef VRISKA_MINGW
+    static LARGE_INTEGER	getFileTime();
+    static void	getTime(timespec * ts);
+# endif // !VRISKA_MINGW
     bool			notify(bool lock = true);
     bool			notifyAll(bool lock = true);
     INativeCondVar::Result	wait(Time const & timeout = Time::Zero, bool lock = true);

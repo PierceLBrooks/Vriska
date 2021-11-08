@@ -38,15 +38,22 @@ namespace Vriska
     ScopedLock		lock(_mutex);
 
     val = 1;
+# ifndef VRISKA_MINGW
     if ((pe = getprotobyname(protocol.c_str())) == NULL)
       return (Error::UnknownProtocol);
+# endif // !VRISKA_MINGW
     flags = SOCK_STREAM;
     if (protocol == "UDP")
       flags = SOCK_DGRAM;
     if ((_sock = ::socket(AF_INET, flags, pe ? pe->p_proto : 0)) == -1)
       return (Error::CannotCreateSocket);
+# ifndef VRISKA_MINGW
     if (setsockopt(_sock, SOL_SOCKET, SO_REUSEADDR, &val, size) == -1)
       return (Error::CannotCreateSocket);
+# else // VRISKA_MINGW
+    if (setsockopt(_sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&val, size) == -1)
+      return (Error::CannotCreateSocket);
+# endif // !VRISKA_MINGW
     return (Error::NoError);
   }
 
@@ -191,7 +198,11 @@ namespace Vriska
     *client = NULL;
     if (_sock == -1)
       return (Error::NoSocket);
+# ifndef VRISKA_MINGW
     sock = ::accept(_sock, reinterpret_cast<struct sockaddr *>(&sa), &len);
+# else // VRISKA_MINGW
+    sock = ::accept(_sock, reinterpret_cast<struct sockaddr *>(&sa), (int *)&len);
+# endif // !VRISKA_MINGW
     if (sock != -1)
       {
 	ns = new LinuxSocket();
@@ -282,7 +293,11 @@ namespace Vriska
       return ("");
     len = sizeof(sa);
     memset(&sa, 0, sizeof(sa));
+# ifndef VRISKA_MINGW
     getsockname(_sock, reinterpret_cast<struct sockaddr *>(&sa), &len);
+# else // VRISKA_MINGW
+    getsockname(_sock, reinterpret_cast<struct sockaddr *>(&sa), (int *)&len);
+# endif // !VRISKA_MINGW
     ret = inet_ntoa(sa.sin_addr);
     return (ret);
   }
@@ -297,7 +312,11 @@ namespace Vriska
       return (0);
     len = sizeof(sa);
     memset(&sa, 0, sizeof(sa));
+# ifndef VRISKA_MINGW
     getsockname(_sock, reinterpret_cast<struct sockaddr *>(&sa), &len);
+# else // VRISKA_MINGW
+    getsockname(_sock, reinterpret_cast<struct sockaddr *>(&sa), (int *)&len);
+# endif // !VRISKA_MINGW
     return (ntohs(sa.sin_port));
   }
 }

@@ -30,6 +30,11 @@ else()
     set(VRISKA_NETWORK_SRCS ${VRISKA_NETWORK_SRCS}
         src/Socket/LinuxSocket.cpp)
 endif()
+    set(VRISKA_NETWORK_SRCS ${VRISKA_NETWORK_SRCS}
+        src/Startup.cpp)
+if(MINGW)
+    
+endif()
 
 add_library(${VRISKA_NETWORK_LIB} ${VRISKA_LIBRARY_TYPE} ${VRISKA_NETWORK_SRCS})
 set_target_properties(${VRISKA_NETWORK_LIB} PROPERTIES COMPILE_FLAGS "${VRISKA_COMPILE_FLAGS}")

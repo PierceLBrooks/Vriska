@@ -4,9 +4,14 @@
 
 # include <Vriska/Network/INativeSocket.h>
 
-# include <sys/select.h>
-# include <netdb.h>
-# include <arpa/inet.h>
+# ifndef VRISKA_MINGW
+#  include <sys/select.h>
+#  include <netdb.h>
+#  include <arpa/inet.h>
+# else // VRISKA_MINGW
+#  include <winsock2.h>
+#  define socklen_t int
+# endif // !VRISKA_MINGW
 # include <unistd.h>
 
 # include <cstring>

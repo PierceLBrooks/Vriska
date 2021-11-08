@@ -2,21 +2,21 @@
 #include <Vriska/Threads/INativeMutex.h>
 #include <Vriska/Core/Utils.hpp>
 
-#ifdef VRISKA_WINDOWS
+#if defined(VRISKA_WINDOWS) && !defined(VRISKA_MINGW)
 # include <Vriska/Threads/WindowsMutex.h>
 #else
 # include <Vriska/Threads/LinuxMutex.h>
-#endif // !VRISKA_WINDOWS
+#endif // !VRISKA_WINDOWS || VRISKA_MINGW
 
 namespace Vriska
 {
   INativeMutex*	INativeMutex::create(bool recursive)
   {
-#ifdef VRISKA_WINDOWS
+#if defined(VRISKA_WINDOWS) && !defined(VRISKA_MINGW)
     Utils::ignore(recursive);
     return (new WindowsMutex());
 #else
     return (new LinuxMutex(recursive));
-#endif // !VRISKA_WINDOWS
+#endif // !VRISKA_WINDOWS || VRISKA_MINGW
   }
 }

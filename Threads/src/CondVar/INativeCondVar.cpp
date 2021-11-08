@@ -1,11 +1,11 @@
 
 #include <Vriska/Threads/CondVar.h>
 
-#ifdef VRISKA_WINDOWS
+#if defined(VRISKA_WINDOWS) && !defined(VRISKA_MINGW)
 # include <Vriska/Threads/WindowsCondVar.h>
 #else
 # include <Vriska/Threads/LinuxCondVar.h>
-#endif // !VRISKA_WINDOWS
+#endif // !VRISKA_WINDOWS || VRISKA_MINGW
 
 namespace Vriska
 {
@@ -21,11 +21,11 @@ namespace Vriska
 
   INativeCondVar*	INativeCondVar::create(INativeMutex* mutex)
   {
-#ifdef VRISKA_WINDOWS
+#if defined(VRISKA_WINDOWS) && !defined(VRISKA_MINGW)
     return (new WindowsCondVar(mutex));
 #else
     return (new LinuxCondVar(mutex));
-#endif // !VRISKA_WINDOWS
+#endif // !VRISKA_WINDOWS || VRISKA_MINGW
   }
 
   bool	INativeCondVar::lock()

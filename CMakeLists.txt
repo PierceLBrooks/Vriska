@@ -16,6 +16,10 @@ else()
 endif()
 #/Conf
 
+if (MINGW)
+  add_definitions(-DVRISKA_MINGW)
+endif()
+
 if (VRISKA_LIBRARY_TYPE STREQUAL "SHARED")
   add_definitions(-DVRISKA_LIB_DYNAMIC)
 else()
